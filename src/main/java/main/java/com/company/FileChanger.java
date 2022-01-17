@@ -1,6 +1,7 @@
 package main.java.com.company;
 
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -9,6 +10,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.util.Locale;
 
 public class FileChanger {
+    DataFormatter formatter;
+
+    public FileChanger() {
+        formatter = new DataFormatter();
+    }
 
     private void sheets(XSSFWorkbook workbook) {
         int sheetsNumber = workbook.getNumberOfSheets();
@@ -25,11 +31,13 @@ public class FileChanger {
         XSSFRow row = sheet.getRow(indexes[0]);
         XSSFCell cell = row.getCell(indexes[1]);
 
-        return cell.getRichStringCellValue().getString();
+        return formatter.formatCellValue(cell);
     }
 
     public void setCellValue(XSSFSheet sheet, String address, String value) {
         int[] indexes = cellAddressConverter(address);
+
+
         XSSFRow row = sheet.getRow(indexes[0]);
         XSSFCell cell = row.getCell(indexes[1]);
         cell.setCellValue(value);

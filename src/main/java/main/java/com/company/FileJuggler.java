@@ -8,11 +8,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileJungler {
+public class FileJuggler {
+
+    final String HOR_TEMPLATE_FILENAME = "hor_template.xlsx";
+    final String VERT_TEMPLATE_FILENAME = "vert_template.xlsx";
+
+    final String CURRENT_AXES_CELL = "E21";
+    final String HEIGHT_CELL = "E22";
+    final String SECTION_CELL = "E23";
+    final String DRAWING_CELL = "E24";
+    final String REBAR_MATERIALS_CELL = "E25";
+    final String REBAR_CERTIFICATE_CELL = "E26";
+    final String CONCRETE_MATERIALS_CELL = "E27";
+    final String CONCRETE_CERTIFICATES_CELL = "E28";
+    final String REINFORCEMENT_DATE_CELL = "E29";
+    final String REINFORCEMENT_DURATION_CELL = "F29";
+    final String CONCRETING_DATE_CELL = "E30";
+    final String CONCRETING_DURATION_CELL = "F30";
+    final String NEXT_AXES_CELL = "E33";
 
     private final String REBAR_CLASS = "Арматура класу ";
     private final String path;
     private List<XSSFWorkbook> workbooks;
+    private XSSFWorkbook horTemplate;
+    private XSSFWorkbook vertTemplate;
+    private XSSFWorkbook temp;
     private List<String> filenames;
     private FileOpener fileOpener;
     private FileChanger fileChanger;
@@ -29,25 +49,39 @@ public class FileJungler {
     private List<Integer> passport32;
 
 
-    public FileJungler(String path) {
+    public FileJuggler(String path) {
         this.path = path;
         init();
     }
 
     private void init() {
+        putRandom();
+        changeFiles();
+        openFiles();
+        saveFiles();
+    }
+
+    private void openFiles() {
         fileOpener = new FileOpener(path);
         fileChanger = new FileChanger();
-        putRandom();
         try {
-            workbooks = fileOpener.workbooks(path);
+            workbooks = fileOpener.openBooks(path);
             filenames = fileOpener.getFilenames();
+
+           // horTemplate = fileOpener.openBook(path, HOR_TEMPLATE_FILENAME);
+           // vertTemplate = fileOpener.openBook(path, VERT_TEMPLATE_FILENAME);
         } catch (Exception e) {
             System.out.println("Exception while opening " + e.getMessage());
         }
+    }
+
+    private void changeFiles() {
         XSSFSheet sheet = workbooks.get(0).getSheetAt(1);
         setNewRebarValues(sheet);
         doBoring(sheet);
+    }
 
+    private void saveFiles() {
         try {
             saveFile(workbooks.get(0), filenames.get(0));
         } catch (Exception e) {
