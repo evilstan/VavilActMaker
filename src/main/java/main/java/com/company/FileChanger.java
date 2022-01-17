@@ -1,5 +1,6 @@
 package main.java.com.company;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -7,6 +8,8 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class FileChanger {
@@ -40,7 +43,42 @@ public class FileChanger {
 
         XSSFRow row = sheet.getRow(indexes[0]);
         XSSFCell cell = row.getCell(indexes[1]);
-        cell.setCellValue(value);
+
+        if (isNumeric(value)) {
+            cell.setCellValue(Double.parseDouble(value));
+        } else if (isDate(value)) {
+            setDate(cell, value);
+        } else cell.setCellValue(value);
+    }
+
+    public static boolean isDate(String str) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(str.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private void setDate(Cell cell, String str) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+            dateFormat.setLenient(false);
+            cell.setCellValue(dateFormat.parse(str.trim()));
+        } catch (Exception e) {
+            cell.setCellValue(str);
+        }
     }
 
     public void addRow(XSSFSheet sheet, int startRow) {

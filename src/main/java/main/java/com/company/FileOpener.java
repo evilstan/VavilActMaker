@@ -34,13 +34,13 @@ public class FileOpener {
         return new XSSFWorkbook(new File(path + filename));
     }
 
-    public List<XSSFWorkbook> openBooks(String path) throws Exception {
+    public void openBooks(String path) throws Exception {
         final File folder = new File(path);
         List<File> files = parseFile(folder);
+        workbooks.clear();
         for (File file : files) {
             workbooks.add(new XSSFWorkbook(file));
         }
-        return workbooks;
     }
 
     private List<File> parseFile(final File folder) {
@@ -51,6 +51,7 @@ public class FileOpener {
                 System.out.println(excelFile.getName());
                 if (checkExtension(excelFile)) {
                     files.add(excelFile);
+
                     String parent3 = excelFile.getParentFile().getName() + "\\";
                     String parent2 = excelFile.getParentFile().getParentFile().getName() + "\\";
                     String parent1 = excelFile.getParentFile().getParentFile().getParentFile().getName() + "\\";
@@ -73,5 +74,9 @@ public class FileOpener {
 
     public List<String> getFilenames() {
         return filenames;
+    }
+
+    public List<XSSFWorkbook> getWorkbooks(){
+        return workbooks;
     }
 }

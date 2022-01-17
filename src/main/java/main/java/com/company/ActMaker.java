@@ -1,5 +1,6 @@
 package main.java.com.company;
 
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -19,6 +20,8 @@ public class ActMaker {
 
     private String filePath;
     private String templatePath;
+    private String filename;
+
     private List<String> filenames;
 
     private List<XSSFWorkbook> workbooks;
@@ -38,16 +41,26 @@ public class ActMaker {
         templatePath = "C:\\vavil\\";
         openFiles();
         initMaps();
-        // changeBooks();
-        setValuesMap(workbooks.get(0).getSheetAt(0));
-        writeNewBook();
+        changeBooks();
     }
 
     private void openFiles() {
         FileOpener fileOpener = new FileOpener(filePath);
         try {
-            workbooks = fileOpener.openBooks(filePath);
+            fileOpener.openBooks(filePath);
+            workbooks = fileOpener.getWorkbooks();
             filenames = fileOpener.getFilenames();
+
+            System.out.println("Filenames size = " + filenames.size());
+
+            for (int i = 0; i < filenames.size(); i++) {
+                System.out.println(i + ". Filename = " + filenames.get(i));
+            }
+
+            System.out.println("Workbooks size = " + workbooks.size());
+            for (XSSFWorkbook workbook : workbooks) {
+                System.out.println(workbooks.indexOf(workbook) + ". Workbook = " + workbook.getSheetName(0));
+            }
 
             horTemplate = fileOpener.openBook(templatePath, HOR_TEMPLATE_FILENAME);
             vertTemplate = fileOpener.openBook(templatePath, VERT_TEMPLATE_FILENAME);
@@ -64,7 +77,9 @@ public class ActMaker {
 
     private void changeBooks() {
         for (XSSFWorkbook workbook : workbooks) {
+            filename = filenames.get(workbooks.indexOf(workbook));
             setValuesMap(workbook.getSheetAt(0));
+            writeNewBook();
         }
     }
 
@@ -89,9 +104,6 @@ public class ActMaker {
     }
 
     private void writeNewBook() {
-        //XSSFWorkbook newBook = new XSSFWorkbook(new File(path + NEW + "file.xlsx"));
-        XSSFWorkbook workbook = vertTemplate;
-
         for (String key : address.keySet()) {
             XSSFSheet sheet = vertTemplate.getSheetAt(0);
             String adr = address.get(key);
@@ -101,16 +113,16 @@ public class ActMaker {
 
         System.out.println(filenames.get(0));
         try {
-            saveFile(vertTemplate, filenames.get(0));
-            System.out.println();
+            saveFile(vertTemplate, filename);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error saving file " + e.getMessage());
         }
     }
 
     private void saveFile(XSSFWorkbook workbook, String filename) throws IOException {
         String savePath = templatePath + NEW + filename;
         FileOutputStream saveStream = new FileOutputStream(savePath);
+        XSSFFormulaEvaluator.evaluateAllFormulaCells(workbook);
         workbook.write(saveStream);
     }
 

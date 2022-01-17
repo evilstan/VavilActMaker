@@ -65,7 +65,7 @@ public class FileJuggler {
         fileOpener = new FileOpener(path);
         fileChanger = new FileChanger();
         try {
-            workbooks = fileOpener.openBooks(path);
+            //workbooks = fileOpener.openBooks(path);
             filenames = fileOpener.getFilenames();
 
            // horTemplate = fileOpener.openBook(path, HOR_TEMPLATE_FILENAME);
