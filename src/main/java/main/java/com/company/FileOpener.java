@@ -9,13 +9,11 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class FileOpener {
-    private final String path;
     private List<File> files;
     private List<XSSFWorkbook> workbooks;
     private List<String> filenames;
 
     public FileOpener(String path) {
-        this.path = path;
         init();
         try {
             openBooks(path);
@@ -51,11 +49,6 @@ public class FileOpener {
                 System.out.println(excelFile.getName());
                 if (checkExtension(excelFile)) {
                     files.add(excelFile);
-
-/*                    String parent3 = excelFile.getParentFile().getName() + "\\";
-                    String parent2 = excelFile.getParentFile().getParentFile().getName() + "\\";
-                    String parent1 = excelFile.getParentFile().getParentFile().getParentFile().getName() + "\\";
-                    filenames.add(parent1 + parent2 + parent3 + excelFile.getName());*/
                     System.out.println("FilePath = " + excelFile.getPath());
                     filenames.add(excelFile.getPath());
                 }

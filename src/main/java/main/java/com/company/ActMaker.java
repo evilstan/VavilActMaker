@@ -13,12 +13,10 @@ public class ActMaker {
 
     final String HOR_TEMPLATE_FILENAME = "hor_template.xlsx";
     final String VERT_TEMPLATE_FILENAME = "vert_template.xlsx";
-    final String NEW = "\\new\\";
-    final String TEMPLATES = "\\templates\\";
     Map<String, String> address;
     Map<String, String> value;
 
-    private String filePath;
+    private final String filePath;
     private String templatePath;
     private String filename;
 
@@ -27,7 +25,6 @@ public class ActMaker {
     private List<XSSFWorkbook> workbooks;
     private XSSFWorkbook horTemplate;
     private XSSFWorkbook vertTemplate;
-    private XSSFWorkbook temp;
 
     private FileChanger fileChanger;
 
@@ -40,7 +37,7 @@ public class ActMaker {
         fileChanger = new FileChanger();
         templatePath = "C:\\vavil\\";
         openFiles();
-        initMaps();
+        writeDataToAddressMap();
         changeBooks();
     }
 
@@ -51,17 +48,6 @@ public class ActMaker {
             workbooks = fileOpener.getWorkbooks();
             filenames = fileOpener.getFilenames();
 
-            System.out.println("Filenames size = " + filenames.size());
-
-            for (int i = 0; i < filenames.size(); i++) {
-                System.out.println(i + ". Filename = " + filenames.get(i));
-            }
-
-            System.out.println("Workbooks size = " + workbooks.size());
-            for (XSSFWorkbook workbook : workbooks) {
-                System.out.println(workbooks.indexOf(workbook) + ". Workbook = " + workbook.getSheetName(0));
-            }
-
             horTemplate = fileOpener.openBook(templatePath, HOR_TEMPLATE_FILENAME);
             vertTemplate = fileOpener.openBook(templatePath, VERT_TEMPLATE_FILENAME);
         } catch (Exception e) {
@@ -69,7 +55,7 @@ public class ActMaker {
         }
     }
 
-    private void initMaps() {
+    private void writeDataToAddressMap() {
         MapMaker mapMaker = new MapMaker();
         value = mapMaker.getValues();
         address = mapMaker.getAddresses();
@@ -78,12 +64,12 @@ public class ActMaker {
     private void changeBooks() {
         for (XSSFWorkbook workbook : workbooks) {
             filename = filenames.get(workbooks.indexOf(workbook));
-            setValuesMap(workbook.getSheetAt(0));
-            writeNewBook();
+            writeDataToValueMap(workbook.getSheetAt(0));
+            writeMapToBook();
         }
     }
 
-    private void setValuesMap(XSSFSheet sheet) {
+    private void writeDataToValueMap(XSSFSheet sheet) {
         for (String key : value.keySet()) {
             String address = this.address.get(key);
             String value = fileChanger.getCellValue(sheet, address);
@@ -91,12 +77,8 @@ public class ActMaker {
         }
         value.put("REINFORCEMENT_DATE_CELL", formatDate(value.get("REINFORCEMENT_DATE_CELL")));
         value.put("CONCRETING_DATE_CELL", formatDate(value.get("CONCRETING_DATE_CELL")));
-
         value.put("NEXT_HEIGHT_CELL", formatHeight(value.get("NEXT_HEIGHT_CELL")));
-
-        for (String key : value.keySet()) {
-            System.out.println(key + " = " + value.get(key));
-        }
+        value.put("HEIGHT_CELL", formatHeight(value.get("HEIGHT_CELL")));
     }
 
     private String formatDate(String inputDate) {
@@ -106,6 +88,7 @@ public class ActMaker {
 
     private String formatHeight(String input) {
         String height = input.trim();
+        height = height.replace("\\.", "\\,");
         if (height.endsWith("м") || height.endsWith(".")) {
             return input;
         } else {
@@ -113,17 +96,27 @@ public class ActMaker {
         }
     }
 
-    private void writeNewBook() {
+    private void writeMapToBook() {
+        XSSFWorkbook workbook;
+        XSSFSheet sheet;
+
+        if (value.get("ACT_TYPE").contains("вертикал")) {
+            workbook = vertTemplate;
+        } else {
+            workbook = horTemplate;
+        }
+
+        sheet = workbook.getSheetAt(0);
+
         for (String key : address.keySet()) {
-            XSSFSheet sheet = vertTemplate.getSheetAt(0);
             String adr = address.get(key);
             String val = value.get(key);
+            System.out.println("Saving " + val + " to " + adr);
             fileChanger.setCellValue(sheet, adr, val);
         }
 
-        System.out.println(filenames.get(0));
         try {
-            saveFile(vertTemplate, filename);
+            saveFile(workbook, filename);
         } catch (IOException e) {
             System.out.println("Error saving file " + e.getMessage());
         }
