@@ -52,10 +52,12 @@ public class FileOpener {
                 if (checkExtension(excelFile)) {
                     files.add(excelFile);
 
-                    String parent3 = excelFile.getParentFile().getName() + "\\";
+/*                    String parent3 = excelFile.getParentFile().getName() + "\\";
                     String parent2 = excelFile.getParentFile().getParentFile().getName() + "\\";
                     String parent1 = excelFile.getParentFile().getParentFile().getParentFile().getName() + "\\";
-                    filenames.add(parent1 + parent2 + parent3 + excelFile.getName());
+                    filenames.add(parent1 + parent2 + parent3 + excelFile.getName());*/
+                    System.out.println("FilePath = " + excelFile.getPath());
+                    filenames.add(excelFile.getPath());
                 }
             }
         }

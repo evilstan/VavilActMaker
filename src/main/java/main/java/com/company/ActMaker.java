@@ -92,6 +92,8 @@ public class ActMaker {
         value.put("REINFORCEMENT_DATE_CELL", formatDate(value.get("REINFORCEMENT_DATE_CELL")));
         value.put("CONCRETING_DATE_CELL", formatDate(value.get("CONCRETING_DATE_CELL")));
 
+        value.put("NEXT_HEIGHT_CELL", formatHeight(value.get("NEXT_HEIGHT_CELL")));
+
         for (String key : value.keySet()) {
             System.out.println(key + " = " + value.get(key));
         }
@@ -100,7 +102,15 @@ public class ActMaker {
     private String formatDate(String inputDate) {
         String[] list = inputDate.split("/");
         return list[1] + "." + list[0] + "." + list[2];
-        //return inputDate.replace("\\/", "\\a");
+    }
+
+    private String formatHeight(String input) {
+        String height = input.trim();
+        if (height.endsWith("м") || height.endsWith(".")) {
+            return input;
+        } else {
+            return height + " м.";
+        }
     }
 
     private void writeNewBook() {
@@ -120,7 +130,7 @@ public class ActMaker {
     }
 
     private void saveFile(XSSFWorkbook workbook, String filename) throws IOException {
-        String savePath = templatePath + NEW + filename;
+        String savePath = filename.replace("old", "new");
         FileOutputStream saveStream = new FileOutputStream(savePath);
         XSSFFormulaEvaluator.evaluateAllFormulaCells(workbook);
         workbook.write(saveStream);
