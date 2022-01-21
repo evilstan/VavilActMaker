@@ -22,7 +22,7 @@ public class CellsFiller {
     final String REBAR_DATE = "E25";
     final String CONCRETE_DATE = "E26";
 
-    public CellsFiller(){
+    public CellsFiller() {
         fileChanger = new FileChanger();
     }
 
@@ -40,26 +40,21 @@ public class CellsFiller {
         fileChanger.setCellValue(sheet, NEXT_HEIGHT, dataObject.getNextHeight());
         fileChanger.setCellValue(sheet, SECTION, dataObject.getSection());
 
-        fileChanger.setCellValue(sheet, REBAR, splitRebar(dataObject.getRebar())[0]);
-        fileChanger.setCellValue(sheet, REBAR_CERTIFICATES, splitRebar(dataObject.getRebar())[1]);
+        fileChanger.setCellValue(sheet, REBAR, formatRebar(dataObject.getRebar())[0]);
+        fileChanger.setCellValue(sheet, REBAR_CERTIFICATES, formatRebar(dataObject.getRebar())[1]);
         return workbook;
     }
 
-    private String[] splitRebar(String rebar) {
-        if (rebar.length() > MAX_LOWER_CHARACTERS) {
-            return calculateStringLength(rebar);
-        } else return new String[]{"", rebar};
-    }
+    private String[] formatRebar(String s) {
 
-    private String[] calculateStringLength(String s) {
-        String splitter;
-
-        for (int j = MAX_UPPER_CHARACTERS; j >= 0; j--) {
-            splitter = Character.toString(s.charAt(j));
-            if (splitter.equals(";") || splitter.equals(",")) {
-                return new String[]{s.substring(0, j + 1).trim(), "\n", s.substring(j + 2, s.length() - 1).trim()};
+        if (s.length() > MAX_LOWER_CHARACTERS) {
+            for (int j = MAX_UPPER_CHARACTERS; j >= 0; j--) {
+                String splitter = Character.toString(s.charAt(j));
+                if (splitter.equals(";") || splitter.equals(",")) {
+                    return new String[]{s.substring(0, j + 1).trim(), "\n", s.substring(j + 2, s.length() - 1).trim()};
+                }
             }
         }
-        return new String[2];
+        return new String[]{"", s};
     }
 }

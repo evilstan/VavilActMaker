@@ -11,14 +11,13 @@ import java.util.List;
 public class ActCreator {
     final String DB_FILENAME = "database.xlsx";
     final String PARENT_PATH = "C:\\vavil\\";
+    final int LAST_ROW = 45;
 
     private XSSFWorkbook database;
-    private XSSFSheet sheet;
 
     private List<ActDataObject> dataObjects;
 
-    private FileOpener fileOpener;
-    private ActFileCreator actFileCreator;
+    private final FileOpener fileOpener;
 
     public ActCreator() throws Exception {
         fileOpener = new FileOpener();
@@ -34,19 +33,14 @@ public class ActCreator {
     private void createDataObjects() {
         dataObjects = new ArrayList<>();
 
-        for (int i = 0; i < 44; i++) {
+        for (int i = 0; i < LAST_ROW; i++) {
             dataObjects.add(new ActDataObject(database.getSheetAt(0).getRow(i)));
         }
-
-/*        for (Row row : database.getSheetAt(0)) {
-            if (row == null) return;
-            dataObjects.add(new ActDataObject(row));
-        }*/
     }
 
     private void createFiles() {
-        actFileCreator = new ActFileCreator(dataObjects);
-
+        ActFileCreator actFileCreator = new ActFileCreator(dataObjects);
+        actFileCreator.makeActs();
     }
 
 

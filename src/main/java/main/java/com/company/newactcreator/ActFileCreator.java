@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class ActFileCreator {
-    private FileOpener fileOpener;
-    private CellsFiller cellsFiller;
+    private final FileOpener fileOpener;
+    private final CellsFiller cellsFiller;
 
     final String HOR_TEMPLATE_FILENAME = "hor_template.xlsx";
     final String VERT_TEMPLATE_FILENAME = "vert_template.xlsx";
@@ -21,7 +21,7 @@ public class ActFileCreator {
     private XSSFWorkbook vertTemplate;
     private XSSFWorkbook registry;
 
-    private List<ActDataObject> dataObjects;
+    private final List<ActDataObject> dataObjects;
 
     public ActFileCreator(List<ActDataObject> dataObjects) {
         this.dataObjects = dataObjects;
@@ -32,45 +32,39 @@ public class ActFileCreator {
         } catch (Exception e) {
             System.out.println("Failed to open files: " + e.getMessage());
         }
-
-        makeActs();
     }
 
+    //TODO add registry
     private void openFiles() throws Exception {
         horTemplate = fileOpener.openBook(PARENT_PATH, HOR_TEMPLATE_FILENAME);
         vertTemplate = fileOpener.openBook(PARENT_PATH, VERT_TEMPLATE_FILENAME);
-       // registry = fileOpener.openBook(PARENT_PATH, REG_FILENAME);
+        // registry = fileOpener.openBook(PARENT_PATH, REG_FILENAME);
     }
 
-    private void makeActs() {
+    public void makeActs() {
         for (ActDataObject dataObject : dataObjects) {
-            XSSFWorkbook newAct = cellsFiller.fillCells(getTemplate(dataObject.isVertical()), dataObject);
+            XSSFWorkbook newAct = cellsFiller.fillCells(
+                    dataObject.isVertical() ? vertTemplate : horTemplate
+                    , dataObject);
             String filename = generateFileName(dataObject);
             String path = generateFilePath(dataObject);
-            saveFile(path,filename,newAct);
+            saveFile("C:\\vavil\\Fresh\\", filename, newAct);
         }
     }
 
-    private XSSFWorkbook getTemplate(boolean isVertical) {
-        if (isVertical) {
-            return vertTemplate;
-        }
-        return horTemplate;
-    }
 
     private String generateFileName(ActDataObject dataObject) {
         String result = "ПП ";
         if (dataObject.isVertical()) {
             result = "Вертикал ";
         }
-        result += dataObject.getSection() + " на відм. " + dataObject.getCurrentHeight() + ".xlsx";
+        result += dataObject.getSection() + " з відм. " + dataObject.getCurrentHeight() + ".xlsx";
         return result;
     }
 
     //TODO correctly generate path!
     private String generateFilePath(ActDataObject dataObject) {
-        //return "C:\\vavil\\Fresh\\" + dataObject.getSection() + "\\" + dataObject.getCurrentHeight()+"\\";
-        return "C:\\vavil\\Fresh\\";
+        return "C:\\vavil\\Fresh\\" + dataObject.getSection() + "\\" + dataObject.getCurrentHeight() + "\\";
     }
 
     private void saveFile(String path, String filename, XSSFWorkbook workbook) {
