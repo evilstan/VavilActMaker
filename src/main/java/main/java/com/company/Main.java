@@ -1,5 +1,7 @@
 package main.java.com.company;
 
+import main.java.com.company.newactcreator.ActCreator;
+import main.java.com.company.oldactchanger.ActMaker;
 import org.apache.log4j.BasicConfigurator;
 
 public class Main {
@@ -20,7 +22,13 @@ public class Main {
         }*/
 
        // FileJuggler fileChanger = new FileJuggler("c:\\2\\");
-        ActMaker actMaker = new ActMaker(PATH);
+        //ActMaker actMaker = new ActMaker(PATH);
+
+        try {
+            ActCreator actCreator = new ActCreator();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

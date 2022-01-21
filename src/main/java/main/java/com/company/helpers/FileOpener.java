@@ -1,4 +1,4 @@
-package main.java.com.company;
+package main.java.com.company.helpers;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -20,6 +20,10 @@ public class FileOpener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public FileOpener(){
+        init();
     }
 
     private void init() {
@@ -64,14 +68,15 @@ public class FileOpener {
         if (i > 0) {
             extension = file.getName().substring(i + 1);
         }
-        return extension.toLowerCase(Locale.ROOT).contains("xls");
+        return extension.toLowerCase(Locale.ROOT).contains("xls")
+                && !file.getName().toLowerCase(Locale.ROOT).contains("~");
     }
 
     public List<String> getFilenames() {
         return filenames;
     }
 
-    public List<XSSFWorkbook> getWorkbooks(){
+    public List<XSSFWorkbook> getWorkbooks() {
         return workbooks;
     }
 }

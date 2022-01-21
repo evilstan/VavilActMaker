@@ -1,5 +1,7 @@
-package main.java.com.company;
+package main.java.com.company.oldactchanger;
 
+import main.java.com.company.helpers.FileChanger;
+import main.java.com.company.helpers.FileOpener;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -46,7 +48,10 @@ public class ActMaker {
         try {
             fileOpener.openBooks(filePath);
             workbooks = fileOpener.getWorkbooks();
+            System.out.println("workbooks size " + workbooks.size());
+
             filenames = fileOpener.getFilenames();
+            System.out.println("filenames size " + filenames.size());
 
             horTemplate = fileOpener.openBook(templatePath, HOR_TEMPLATE_FILENAME);
             vertTemplate = fileOpener.openBook(templatePath, VERT_TEMPLATE_FILENAME);
@@ -62,10 +67,19 @@ public class ActMaker {
     }
 
     private void changeBooks() {
+        DrawingAdder drawingAdder = new DrawingAdder();
         for (XSSFWorkbook workbook : workbooks) {
             filename = filenames.get(workbooks.indexOf(workbook));
-            writeDataToValueMap(workbook.getSheetAt(0));
-            writeMapToBook();
+/*            writeDataToValueMap(workbook.getSheetAt(0));
+            writeMapToBook();*/
+            workbook = drawingAdder.addDrawings(workbook);
+
+            try {
+                saveFile(workbook, filename);
+                workbook.close();
+            } catch (IOException e) {
+                System.out.println("Error saving file " + e.getMessage());
+            }
         }
     }
 
@@ -115,11 +129,7 @@ public class ActMaker {
             fileChanger.setCellValue(sheet, adr, val);
         }
 
-        try {
-            saveFile(workbook, filename);
-        } catch (IOException e) {
-            System.out.println("Error saving file " + e.getMessage());
-        }
+
     }
 
     private void saveFile(XSSFWorkbook workbook, String filename) throws IOException {

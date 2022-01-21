@@ -1,4 +1,4 @@
-package main.java.com.company;
+package main.java.com.company.helpers;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
@@ -35,6 +35,14 @@ public class FileChanger {
         XSSFCell cell = row.getCell(indexes[1]);
 
         return formatter.formatCellValue(cell);
+    }
+
+    public double getCellDoubleValue(XSSFSheet sheet, String address){
+        int[] indexes = cellAddressConverter(address);
+
+        XSSFRow row = sheet.getRow(indexes[0]);
+        XSSFCell cell = row.getCell(indexes[1]);
+        return cell.getNumericCellValue();
     }
 
     public void setCellValue(XSSFSheet sheet, String address, String value) {

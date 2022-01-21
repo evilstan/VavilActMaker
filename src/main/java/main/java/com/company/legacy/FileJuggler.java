@@ -1,5 +1,7 @@
-package main.java.com.company;
+package main.java.com.company.legacy;
 
+import main.java.com.company.helpers.FileChanger;
+import main.java.com.company.helpers.FileOpener;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
