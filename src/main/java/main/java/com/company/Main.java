@@ -1,5 +1,7 @@
 package main.java.com.company;
 
+import main.java.com.company.newactcreator.ActCreator;
+import main.java.com.company.oldactchanger.ActMaker;
 import main.java.com.company.oldactchanger.RebarAdder;
 import org.apache.log4j.BasicConfigurator;
 
@@ -11,7 +13,7 @@ public class Main {
         System.setProperty("log4j.configurationFile", "./path_to_the_log4j2_config_file/log4j2.xml");
 
        // FileJuggler fileChanger = new FileJuggler("c:\\2\\");
-        //ActMaker actMaker = new ActMaker(PATH);
+        ActMaker actMaker = new ActMaker(PATH);
 /*        RebarParser rebarParser = new RebarParser();
         List<String> list = rebarParser.parse("Арматура класу А500С Ø10,Ø12,Ø16,Ø20 А240С Ø6,Ø8");
         System.out.println("List size = " + list.size());
@@ -20,6 +22,12 @@ public class Main {
             System.out.println(s);
         }*/
         RebarAdder rebarAdder = new RebarAdder();
+
+        try {
+            ActCreator actCreator = new ActCreator();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 /*        try {
             ActCreator actCreator = new ActCreator();

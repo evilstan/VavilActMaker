@@ -27,7 +27,6 @@ public class RebarAdder {
     }
 
     private void init() {
-      //  toPdf();
         fileChanger = new FileChanger();
         rebarParser = new RebarParser();
         openFiles();

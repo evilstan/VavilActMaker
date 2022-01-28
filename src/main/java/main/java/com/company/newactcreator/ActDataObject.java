@@ -25,8 +25,11 @@ public class ActDataObject {
     private final boolean isVertical;
 
     private final List<String> rowData;
+    static int counter = 0;
 
     public ActDataObject(Row row) {
+        counter++;
+        System.out.println("Object number " + counter);
         formatter = new DataFormatter();
         rowData = new ArrayList<>();
 

@@ -9,7 +9,7 @@ import java.util.List;
 public class ActCreator {
     final String DB_FILENAME = "database.xlsx";
     final String PARENT_PATH = "C:\\vavil\\";
-    final int LAST_ROW = 45;
+    final int LAST_ROW = 10;
 
     private XSSFWorkbook database;
 
